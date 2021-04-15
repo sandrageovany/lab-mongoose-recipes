@@ -12,7 +12,8 @@ mongoose
   .connect(MONGODB_URI, {
     useCreateIndex: true,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
   })
   .then(self => {
     console.log(`Connected to the database: "${self.connection.name}"`);
@@ -20,8 +21,29 @@ mongoose
     return self.connection.dropDatabase();
   })
   .then(() => {
-    // Run your code here, after you have insured that the connection was made
-  })
+updateDB(); })
   .catch(error => {
     console.error('Error connecting to the database', error);
   });
+
+async function updateDB() {
+  try {
+
+    let createdRec= await Recipe.create({title:'Pizza', cuisine:'Italian'});
+    console.log(createdRec.title);
+    let d= await Recipe.insertMany(data);
+   d.forEach(recipe => console.log(recipe.title))
+  
+    await Recipe.findOneAndUpdate({title:'Rigatoni alla Genovese'},{duration:100});
+    console.log('successfully updated');
+    await Recipe.deleteOne({title:'Carrot Cake'});
+    console.log('carrot cake deleted');
+    
+  }
+  catch(error){
+    console.log(error);
+  }
+  finally{
+    mongoose.connection.close();
+  }
+}
